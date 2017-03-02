@@ -1,0 +1,233 @@
+#ifndef INFNUM_HELPER
+    #define INFNUM_HELPER
+#include <string>
+#include <fstream>
+#include "InfNum.h"
+#include <math.h>
+//-pedantic
+//
+struct stats {
+    std::string filename;
+    std::string output;
+    std::string algorithm;
+    int numElements;
+    int numCompare = 0;
+    int numSwaps = 0;
+    int digPerNode;
+    int bigOCompare = 0;
+    int bigOSwaps = 0;
+};
+void printInfNumArr(InfNum * arr, struct stats * myStats){
+    for( int i = 0; i < myStats->numElements; i++){
+        arr[i].print();
+    }
+}
+void fileWriter(struct stats * myStats){
+    fstream file;
+    file.open(myStats->output, std::fstream::in | std::fstream::out
+            | std::fstream::app);
+    if(!file){
+        
+    }
+    if(file.is_open()){
+        file << "algoritm\t#numbers(2)\t#comparisons\t#swaps\t#bigOComparisons\t#bigOSwaps\n";
+        file << myStats->algorithm << "\t\t" << myStats->numElements << "\t\t" <<
+                myStats->numCompare << "\t\t" << myStats->numSwaps << "\t" << 
+                myStats->bigOCompare << "\t" << myStats->bigOSwaps << "\n\n";
+    }
+    file.close();
+}
+
+template <class T>
+void infNumBubbleSort(T arr [], int size){
+    for( int i = 1; i < size; i++){
+        int v = i;
+        while(v > 0 && arr[v-1] > arr[v]){
+            T temp = arr[v];
+            arr[v] = arr[v-1];
+            arr[v-1] = temp;
+            v--;
+        }
+    }
+}
+template <class T>
+void swapElms(T * arr, int a, int b){
+    T temp = arr[a];
+    arr[a] = arr[b];
+    arr[b] = temp;
+}
+
+void quickSortHelper(InfNum * arr, struct stats * myStats, int left, int right){
+    int i = left, j = right;
+    InfNum tmp = arr[i];
+    InfNum pivot = arr[(left + right) / 2];
+
+    //partition
+    while(i<=j){
+        while(arr[i] < pivot){
+            i++;
+            myStats->numCompare++;
+        }
+        while(arr[j] > pivot){
+            j--;
+            myStats->numCompare++;
+        }
+        if(i <= j){
+            myStats->numSwaps++;
+            tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+            i++;
+            j--;
+        }
+    }
+    if(left < j)
+        quickSortHelper(arr, myStats,left, j);
+    if(i < right)
+        quickSortHelper(arr, myStats, i, right);
+}
+void kesQuickSort(InfNum * arr, struct stats * myStats){
+    quickSortHelper(arr, myStats, 0, myStats->numElements - 1);
+}
+
+void maxHeapify(InfNum * arr, struct stats * myStats, int i, int n){
+    int j;
+    InfNum temp = arr[i];
+    j = 2*i;
+    while(j <= n){
+        if( j < n && arr[j + 1] > arr[j]){
+            j = j+1;
+        }
+        if(temp > arr[j]){
+            break;
+        }
+        else if(temp < arr[j] || temp == arr[j]){
+            arr[j/2] = arr[j];
+            j = 2*j;
+        }
+    }
+    arr[j/2] = temp;
+    return;
+}
+void runHeapSort(InfNum * arr, struct stats * myStats, int n){
+    InfNum temp = arr[0];
+    for(int i = n; i >= 2; i--){
+        temp = arr[i];
+        swapElms(arr, i, 1);
+        maxHeapify(arr, myStats, 1, i-1);
+    }
+}
+void buildMaxHeap(InfNum * arr, struct stats * myStats, int n){
+    for(int i = n / 2; i >= 1; i--){
+        maxHeapify(arr, myStats, 1, i-1);
+    }
+}
+void kesHeapSort(InfNum * arr, struct stats * myStats){
+    buildMaxHeap(arr, myStats, myStats->numElements - 1);
+    runHeapSort(arr, myStats, myStats->numElements - 1);
+}
+void kesSelectSort(InfNum * arr, struct stats * myStats){
+    for(int i = 0; i < myStats->numElements; i++){
+        InfNum min = arr[i];
+        for(int j = i; j < myStats->numElements; j++){
+            myStats->numCompare++;
+            if(arr[j] < min){
+                swapElms(arr, i, j);
+                min = arr[i];
+                myStats->numSwaps++;
+            }
+        }
+    }
+}
+void kesInsertSort(InfNum * arr, struct stats * myStats){
+    for( int i = 1; i < myStats->numElements; i++){
+        for( int j = i; j < myStats->numElements; j++){
+            while(j > 0 && arr[j] < arr[j-1]){
+                myStats->numCompare++;
+                swapElms(arr, j, j-1);
+                j--;
+            }
+        }
+    }
+}
+void merge(InfNum * arr, struct stats * myStats, int low, int high, int mid){
+    int i, j, k;
+    InfNum * arr2 = (InfNum *)calloc(sizeof(InfNum), myStats->numElements);
+
+    i = low;
+    k = low;
+    j = mid+1;
+    while(i <= mid && j <= high){
+        myStats->numCompare++;
+        if(arr[i] < arr[j]){
+            arr2[k] = arr[i];
+            k++;
+            i++;
+            myStats->numSwaps++;
+        }
+        else{
+            arr2[k] = arr[j];
+            k++;
+            j++;
+            myStats->numSwaps++;
+        }
+    }
+    while(i <= mid){
+        arr2[k] = arr[i];
+        k++;
+        i++;
+    }
+    while(j <= high){
+        arr2[k] = arr[j];
+        k++;
+        j++;
+    }
+    for( i = low; i < k; i++)
+        arr[i] = arr2[i];
+    free(arr2);
+}
+void mergeSortHelper(InfNum * arr, struct stats * myStats, int low, int high){
+    int mid;
+    if(low < high){
+       mid = (low + high) / 2;
+       mergeSortHelper(arr, myStats, low, mid);
+       mergeSortHelper(arr, myStats, mid+1, high);
+       merge(arr, myStats, low, high, mid);
+    }
+    return;
+}
+void kesMergeSort(InfNum * arr, struct stats * myStats){
+    mergeSortHelper(arr, myStats, 0, myStats->numElements - 1);
+}
+
+void sortingCaller(InfNum * arr, struct stats * myStats){
+    std::string algo = myStats->algorithm;
+    if(!algo.compare("heap")){
+        kesHeapSort(arr, myStats);
+    }
+    else if(!algo.compare("quick")){
+        kesQuickSort(arr, myStats);
+        myStats->bigOSwaps = myStats->numElements * log(myStats->numElements);
+        myStats->bigOCompare = myStats->bigOSwaps;
+    }
+    else if(!algo.compare("select")){
+        kesSelectSort(arr, myStats);
+        myStats->bigOSwaps = myStats->numElements * myStats->numElements;
+        myStats->bigOCompare = myStats->bigOSwaps;
+    }
+    else if(!algo.compare("insert")){
+        kesInsertSort(arr, myStats);
+        myStats->bigOCompare = myStats->numElements*myStats->numElements;
+    }
+    else if(!algo.compare("merge")){
+        kesMergeSort(arr, myStats);
+        myStats->bigOSwaps = myStats->numElements * log(myStats->numElements);
+        myStats->bigOCompare = myStats->bigOSwaps;
+    }
+
+    fileWriter(myStats);
+    printInfNumArr(arr, myStats);
+    delete(myStats);
+}       
+
+#endif

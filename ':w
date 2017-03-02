@@ -1,0 +1,18 @@
+#include "InfNum.h"
+#include "InfNumUtil.h"
+
+int main(){
+	std:: string s = "12345678";
+    std::string s2 = "22345678"; 
+    //InfNum * arr = new InfNum[4];
+    //arr[0] = InfNum(s, 3);
+
+    InfNum num1(s, 3);
+    InfNum num2(s2, 3);
+
+    
+    int * arr = {5,4,3,2,1};
+    arr = infNumBubbleSort(arr, 5);
+    
+    return 0;
+}
