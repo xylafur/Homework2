@@ -19,6 +19,7 @@ struct stats {
 };
 void printInfNumArr(InfNum * arr, struct stats * myStats){
     for( int i = 0; i < myStats->numElements; i++){
+        cout << "[" << i << "]:";
         arr[i].print();
     }
 }
@@ -94,6 +95,7 @@ int rayPartition(InfNum * arr, int left, int right, struct stats * myStats) {
             swapElms(arr, left, next++);
         }
     }
+    swapElms(arr, right, next);
     return next;
 }
 void rayQuickSort(InfNum * arr, int left, int right,struct stats * myStats) {
@@ -108,42 +110,28 @@ void kesQuickSort(InfNum * arr, struct stats * myStats){
     //quickSortHelper(arr, myStats, 0, myStats->numElements - 1);
     rayQuickSort(arr, 0, myStats->numElements - 1, myStats);
 }
+void bubbleUp(InfNum * arr, struct stats * myStats, int current, int lastIndex){
+    int left = (current*2)+1, right = (current*2)+2; 
+    bool hasLeft = left <= lastIndex; 
+    bool hasRight = right <= lastIndex; 
+    if(hasLeft)
+        bubbleUp(arr, myStats, left, lastIndex);
+    if(hasRight)
+        bubbleUp(arr, myStats, right, lastIndex);
 
-void maxHeapify(InfNum * arr, struct stats * myStats, int i, int n){
-    int j;
-    InfNum temp = arr[i];
-    j = 2*i;
-    while(j <= n){
-        if( j < n && arr[j + 1] > arr[j]){
-            j = j+1;
-        }
-        if(temp > arr[j]){
-            break;
-        }
-        else if(temp < arr[j] || temp == arr[j]){
-            arr[j/2] = arr[j];
-            j = 2*j;
-        }
-    }
-    arr[j/2] = temp;
-    return;
-}
-void runHeapSort(InfNum * arr, struct stats * myStats, int n){
-    InfNum temp = arr[0];
-    for(int i = n; i >= 2; i--){
-        temp = arr[i];
-        swapElms(arr, i, 1);
-        maxHeapify(arr, myStats, 1, i-1);
+    if(hasLeft){
+        if(arr[current] <  arr[left])
+            swapElms(arr, current, left);
+        if(hasRight && arr[current] < arr[right] )
+            swapElms(arr, current, right);
     }
 }
-void buildMaxHeap(InfNum * arr, struct stats * myStats, int n){
-    for(int i = n / 2; i >= 1; i--){
-        maxHeapify(arr, myStats, 1, i-1);
-    }
-}
+
 void kesHeapSort(InfNum * arr, struct stats * myStats){
-    buildMaxHeap(arr, myStats, myStats->numElements - 1);
-    runHeapSort(arr, myStats, myStats->numElements - 1);
+    for(int i = myStats->numElements - 1; i >= 0; i--){
+        bubbleUp(arr, myStats, 0, i);
+        swapElms(arr, 0, i);
+    }
 }
 void kesSelectSort(InfNum * arr, struct stats * myStats){
     for(int i = 0; i < myStats->numElements; i++){

@@ -16,3 +16,6 @@ quick		10		0		0	23	23
 algoritm	#numbers(2)	#comparisons	#swaps	#bigOComparisons	#bigOSwaps
 quick		10		0		0	23	23
 
+algoritm	#numbers(2)	#comparisons	#swaps	#bigOComparisons	#bigOSwaps
+quick		10		0		0	23	23
+
