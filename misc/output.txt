@@ -1,3 +1,18 @@
 algoritm	#numbers(2)	#comparisons	#swaps	#bigOComparisons	#bigOSwaps
 select		10000		50005000		25018035	100000000	100000000
 
+algoritm	#numbers(2)	#comparisons	#swaps	#bigOComparisons	#bigOSwaps
+select		10000		50005000		25018035	100000000	100000000
+
+algoritm	#numbers(2)	#comparisons	#swaps	#bigOComparisons	#bigOSwaps
+merge		10000		121596		121596	92103	92103
+
+algoritm	#numbers(2)	#comparisons	#swaps	#bigOComparisons	#bigOSwaps
+quick		10		13		9	23	23
+
+algoritm	#numbers(2)	#comparisons	#swaps	#bigOComparisons	#bigOSwaps
+quick		10		0		0	23	23
+
+algoritm	#numbers(2)	#comparisons	#swaps	#bigOComparisons	#bigOSwaps
+quick		10		0		0	23	23
+

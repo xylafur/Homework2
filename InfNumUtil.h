@@ -86,8 +86,27 @@ void quickSortHelper(InfNum * arr, struct stats * myStats, int left, int right){
     if(i < right)
         quickSortHelper(arr, myStats, i, right);
 }
+
+int rayPartition(InfNum * arr, int left, int right, struct stats * myStats) {
+    int next = left;
+    for (; left < right; ++left) {
+        if (arr[left] < arr[right]) {
+            swapElms(arr, left, next++);
+        }
+    }
+    return next;
+}
+void rayQuickSort(InfNum * arr, int left, int right,struct stats * myStats) {
+    if (left < right) {
+        int p = rayPartition(arr, left, right, myStats);
+        rayQuickSort(arr, left, p - 1, myStats);
+        rayQuickSort(arr, p + 1, right, myStats);
+    }
+}
+
 void kesQuickSort(InfNum * arr, struct stats * myStats){
-    quickSortHelper(arr, myStats, 0, myStats->numElements - 1);
+    //quickSortHelper(arr, myStats, 0, myStats->numElements - 1);
+    rayQuickSort(arr, 0, myStats->numElements - 1, myStats);
 }
 
 void maxHeapify(InfNum * arr, struct stats * myStats, int i, int n){
